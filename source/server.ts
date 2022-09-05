@@ -2,7 +2,8 @@
 import http from 'http';
 import express, { Express } from 'express';
 import morgan from 'morgan';
-import routes from './routes/demo.routes';
+import demoRoutes from './routes/demo.routes';
+import schoolRoutes from './routes/school.routes';
 
 const router: Express = express();
 
@@ -28,7 +29,8 @@ router.use((req, res, next) => {
 });
 
 /** Routes */
-router.use('/', routes);
+router.use('/demo/', demoRoutes.router);
+router.use('/', schoolRoutes.router);
 
 /** Error handling */
 router.use((req, res, next) => {
@@ -40,7 +42,7 @@ router.use((req, res, next) => {
 
 /** Server */
 const httpServer = http.createServer(router);
-const PORT: any = process.env.PORT ?? 6060;
+const PORT: any = process.env.PORT ?? 6061;
 httpServer.listen(
     PORT,
      () => {
