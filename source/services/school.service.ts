@@ -1,22 +1,22 @@
 import { Connection, SqlClient, Error } from "msnodesqlv8";
-import { whiteBoardType } from "../entities";
+import { store } from "../entities";
 import { ErrorCodes, General, DB_CONNECTION_STRING, Queries } from "../constants";
 import { ErrorHelper } from "../helpers/error.helper";
 
-interface localWhiteBoardType {
+interface localStore {
     id: number;
-    white_board_type: string;
+    store_name: string;
 }
 
 interface ISchoolService {
-    getBoardTypes(): Promise<whiteBoardType[]>;
-    getBoardType(id: number): Promise<whiteBoardType>;
+    getBoardTypes(): Promise<store[]>;
+    getBoardType(id: number): Promise<store>;
 };
 
 export class SchoolService implements ISchoolService {
-    public getBoardTypes(): Promise<whiteBoardType[]> {
-        return new Promise<whiteBoardType[]>((resolve, reject) => {
-            const result: whiteBoardType[] = [];
+    public getBoardTypes(): Promise<store[]> {
+        return new Promise<store[]>((resolve, reject) => {
+            const result: store[] = [];
             const sql: SqlClient = require("msnodesqlv8");
 
             const connectionString: string = DB_CONNECTION_STRING;
@@ -28,16 +28,16 @@ export class SchoolService implements ISchoolService {
                     reject(ErrorHelper.parseError(ErrorCodes.ConnectionError, General.DbconnectionError));
                 }
                 else {
-                    connection.query(query, (queryError: Error | undefined, queryResult: localWhiteBoardType[] | undefined) => {
+                    connection.query(query, (queryError: Error | undefined, queryResult: localStore[] | undefined) => {
                         if (queryError) {
                             reject(ErrorHelper.parseError(ErrorCodes.queryError, General.SqlQueryError));
                         }
                         else {
-                            const result: whiteBoardType[] = [];
+                            const result: store[] = [];
                             if (queryResult !== undefined) {
-                                queryResult.forEach(whiteBoardType => {
+                                queryResult.forEach(store => {
                                     result.push(
-                                        this.parseLocalBoardType(whiteBoardType)
+                                        this.parseLocalBoardType(store)
                                     )
                                 });
                             }
@@ -49,9 +49,9 @@ export class SchoolService implements ISchoolService {
         })
     };
 
-    public getBoardType(id: number): Promise<whiteBoardType> {
-        let result: whiteBoardType;
-        return new Promise<whiteBoardType>((resolve, reject) => {
+    public getBoardType(id: number): Promise<store> {
+        let result: store;
+        return new Promise<store>((resolve, reject) => {
 
             const sql: SqlClient = require("msnodesqlv8");
 
@@ -63,7 +63,7 @@ export class SchoolService implements ISchoolService {
                     reject(ErrorHelper.parseError(ErrorCodes.ConnectionError, General.DbconnectionError));
                 }
                 else {
-                    connection.query(`${query} ${id}`, (queryError: Error | undefined, queryResult: localWhiteBoardType[] | undefined) => {
+                    connection.query(`${query} ${id}`, (queryError: Error | undefined, queryResult: localStore[] | undefined) => {
                         if (queryError) {
                             reject(ErrorHelper.parseError(ErrorCodes.queryError, General.SqlQueryError));
                         }
@@ -82,10 +82,10 @@ export class SchoolService implements ISchoolService {
         });
     }
 
-    private parseLocalBoardType(local: localWhiteBoardType): whiteBoardType {
+    private parseLocalBoardType(local: localStore): store {
         return {
             id: local.id,
-            type: local.white_board_type
+            store_name: local.store_name
         }
     }
 }

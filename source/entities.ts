@@ -1,6 +1,6 @@
-export interface whiteBoardType {
+export interface store {
     id: number;
-    type: string;
+    store_name: string;
 }
 
 export interface systemError {
