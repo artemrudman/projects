@@ -9,18 +9,18 @@ interface localStore {
 }
 
 interface ISchoolService {
-    getBoardTypes(): Promise<store[]>;
-    getBoardType(id: number): Promise<store>;
+    getStoreNames(): Promise<store[]>;
+    getStoreName(id: number): Promise<store>;
 };
 
 export class SchoolService implements ISchoolService {
-    public getBoardTypes(): Promise<store[]> {
+    public getStoreNames(): Promise<store[]> {
         return new Promise<store[]>((resolve, reject) => {
             const result: store[] = [];
             const sql: SqlClient = require("msnodesqlv8");
 
             const connectionString: string = DB_CONNECTION_STRING;
-            const query: string = Queries.WhiteBoardTypes;
+            const query: string = Queries.StoreNames;
 
             sql.open(connectionString, (connectionError: Error, connection: Connection) => {
                 // Например, сервер не работает
@@ -37,7 +37,7 @@ export class SchoolService implements ISchoolService {
                             if (queryResult !== undefined) {
                                 queryResult.forEach(store => {
                                     result.push(
-                                        this.parseLocalBoardType(store)
+                                        this.parseLocalStoreName(store)
                                     )
                                 });
                             }
@@ -49,14 +49,14 @@ export class SchoolService implements ISchoolService {
         })
     };
 
-    public getBoardType(id: number): Promise<store> {
+    public getStoreName(id: number): Promise<store> {
         let result: store;
         return new Promise<store>((resolve, reject) => {
 
             const sql: SqlClient = require("msnodesqlv8");
 
             const connectionString: string = DB_CONNECTION_STRING;
-            const query: string = Queries.WhiteBoardTypeById;
+            const query: string = Queries.StoreNameById;
 
             sql.open(connectionString, (connectionError: Error, connection: Connection) => {
                 if (connectionError) {
@@ -69,7 +69,7 @@ export class SchoolService implements ISchoolService {
                         }
                         else {
                             if (queryResult !== undefined && queryResult.length === 1) {
-                                result = this.parseLocalBoardType(queryResult[0])
+                                result = this.parseLocalStoreName(queryResult[0])
                             }
                             else if (queryResult !== undefined && queryResult.length === 0) {
                                 //TO DO: Not Found 
@@ -82,7 +82,7 @@ export class SchoolService implements ISchoolService {
         });
     }
 
-    private parseLocalBoardType(local: localStore): store {
+    private parseLocalStoreName(local: localStore): store {
         return {
             id: local.id,
             store_name: local.store_name

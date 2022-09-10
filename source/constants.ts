@@ -11,6 +11,6 @@ export class General {
 export const DB_CONNECTION_STRING: string = "server=ARTEM_RUDMAN\\NEWMSSQLSERVER;Database=Retail_stores_chain;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}";
 
 export class Queries {
-    public static WhiteBoardTypes: string = "SELECT * FROM store";
-    public static WhiteBoardTypeById: string = "SELECT * FROM store WHERE id = ";
+    public static StoreNames: string = "SELECT * FROM store";
+    public static StoreNameById: string = "SELECT * FROM store WHERE id = ";
 }
