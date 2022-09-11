@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/general/board-types', controller.getStoreNames);
 router.get('/general/board-type/:id', controller.getStoreName);
-// router.put('/posts/:id', controller.updatePost);
+router.put('/general/board-type/:id', controller.updateStoreName);
 //router.delete('/posts/:id', controller.deletePost);
 //router.post('/posts', controller.addPost);
 

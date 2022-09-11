@@ -2,6 +2,10 @@ import { Request, Response, NextFunction } from 'express';
 import { ErrorCodes } from '../constants';
 import { systemError, store } from '../entities';
 import { SchoolService } from '../services/school.service';
+import { ErrorHelper } from '../helpers/error.helper';
+import { RequestHelper } from '../helpers/request.helper';
+import { ResponseHelper } from '../helpers/response.helper';
+
 
 const schoolService: SchoolService = new SchoolService();
 
@@ -72,6 +76,32 @@ const getStoreName = async (req: Request, res: Response, next: NextFunction) => 
     else {
         // TODO: Error handling
     }
+};
+
+
+    const updateStoreName = async (req: Request, res: Response, next: NextFunction) => {
+
+        const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(req.params.id);
+        if (typeof numericParamOrError === "number") {
+            if (numericParamOrError > 0) {
+                schoolService.getStoreName(numericParamOrError)
+                    .then((result: store) => {
+                        return res.status(200).json({
+                            result
+                        });
+                    })
+                    .catch((error: systemError) => {
+                        return ResponseHelper.handleError(res, error);
+                    });
+            }
+            else {
+                // TODO: Error handling
+            }
+        }
+        else {
+            return ResponseHelper.handleError(res, numericParamOrError);
+        }
+    };
    
     // const updatePost = async (req: Request, res: Response, next: NextFunction) => {
     //     // get the post id from the req.params
@@ -90,6 +120,5 @@ const getStoreName = async (req: Request, res: Response, next: NextFunction) => 
     //     // });
     // };
 
- };
 
-export default { getStoreNames, getStoreName};
+export default { getStoreNames, getStoreName, updateStoreName };
