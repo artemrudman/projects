@@ -89,3 +89,4 @@ class SqlHelper {
 }
 exports.SqlHelper = SqlHelper;
 SqlHelper.sql = require("msnodesqlv8");
+SqlHelper.mssql = require("mssql");

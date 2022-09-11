@@ -8,7 +8,7 @@ const school_controllers_1 = __importDefault(require("../controllers/school.cont
 const router = express_1.default.Router();
 router.get('/general/board-types', school_controllers_1.default.getStoreNames);
 router.get('/general/board-type/:id', school_controllers_1.default.getStoreName);
-// router.put('/posts/:id', controller.updatePost);
+router.put('/general/board-type/:id', school_controllers_1.default.updateStoreName);
 //router.delete('/posts/:id', controller.deletePost);
 //router.post('/posts', controller.addPost);
 exports.default = { router };
