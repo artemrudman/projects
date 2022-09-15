@@ -1,5 +1,5 @@
 import { ErrorHelper } from "./error.helper";
-import { ErrorCodes } from "../constants";
+import { ErrorCodes, NON_EXISTENT_ID } from "../constants";
 import { General } from "../constants"
 import { systemError } from "../entities";
 
