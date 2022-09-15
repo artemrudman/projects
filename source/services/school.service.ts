@@ -12,6 +12,9 @@ interface localStore {
 interface ISchoolService {
     getStoreNames(): Promise<store[]>;
     getStoreName(id: number): Promise<store>;
+    updateStoreName(store: store): Promise<store>;
+    addStoreName(store: store): Promise<store>;
+    deleteStoreNameById(id: number): Promise<void>;
 };
 
 export class SchoolService implements ISchoolService {
@@ -22,8 +25,8 @@ export class SchoolService implements ISchoolService {
             
             SqlHelper.executeQueryArrayResult<localStore>(Queries.StoreNames)             
             .then((queryResult: localStore[]) => {
-                queryResult.forEach((whiteBoardType: localStore) => {
-                    result.push(this.parseLocalStoreName(whiteBoardType))
+                queryResult.forEach((StoreNames: localStore) => {
+                    result.push(this.parseLocalStoreName(StoreNames))
                 });
                 resolve(result);
             })
@@ -31,35 +34,6 @@ export class SchoolService implements ISchoolService {
         });
     }
 
-
-    // public getStoreNames(): Promise<store[]> {
-    //     return new Promise<store[]>((resolve, reject) => {
-    //         const sql: SqlClient = require("msnodesqlv8");
-    //         const connectionString: string = DB_CONNECTION_STRING;
-    //         const result: store[] = [];
-    
-    //         SqlHelper.OpenConnection()
-    //             .then((connection: Connection) => {
-    //                 connection.query(Queries.StoreNames, (queryError: Error | undefined, queryResult: localStore[] | undefined) => {
-    //                     if (queryError) {
-    //                         reject(ErrorHelper.parseError(ErrorCodes.queryError, General.SqlQueryError));
-    //                     }
-    //                     else {
-    //                         if (queryResult !== undefined) {
-    //                             queryResult.forEach(
-    //                                 (StoreName: localStore) => {
-    //                                     result.push(this.parseLocalStoreName(StoreName))
-    //                                 });
-    //                         }
-                            
-    //                         //console.log(result);
-    //                         resolve(result);
-    //                     }   
-    //                 })
-    //             })
-    //             .catch((error: systemError) => reject(error));
-    //     });
-    // }
 
     public getStoreName(id: number): Promise<store> {
         return new Promise<store>((resolve, reject) => {    
@@ -72,38 +46,43 @@ export class SchoolService implements ISchoolService {
         });
     }
     
-    // public getStoreName(id: number): Promise<store> {
-    //     let result: store;
-    //     return new Promise<store>((resolve, reject) => {
 
-    //         const sql: SqlClient = require("msnodesqlv8");
+    public updateStoreName(store: store): Promise<store> {
+        return new Promise<store>((resolve, reject) => {
+            SqlHelper.executeQueryNoResult<store>(Queries.UpdateStoreNameById, store.store_name, store.id)
+                .then(() => {
+                    resolve(store);
+                })
+                .catch((error: systemError) => {
+                    reject(error);
+                });
+        })
+    }
 
-    //         const connectionString: string = DB_CONNECTION_STRING;
-    //         const query: string = Queries.StoreNameById;
+    public addStoreName(store: store): Promise<store> {
+        return new Promise<store>((resolve, reject) => {
+            SqlHelper.createNew<store>(Queries.AddStoreName, store, store.store_name)
+                .then((result: store) => {
+                    resolve(result);
+                })
+                .catch((error: systemError) => {
+                    reject(error);
+                });
+        })
+    }
 
-    //         sql.open(connectionString, (connectionError: Error, connection: Connection) => {
-    //             if (connectionError) {
-    //                 reject(ErrorHelper.parseError(ErrorCodes.ConnectionError, General.DbconnectionError));
-    //             }
-    //             else {
-    //                 connection.query(`${query} ${id}`, (queryError: Error | undefined, queryResult: localStore[] | undefined) => {
-    //                     if (queryError) {
-    //                         reject(ErrorHelper.parseError(ErrorCodes.queryError, General.SqlQueryError));
-    //                     }
-    //                     else {
-    //                         if (queryResult !== undefined && queryResult.length === 1) {
-    //                             result = this.parseLocalStoreName(queryResult[0])
-    //                         }
-    //                         else if (queryResult !== undefined && queryResult.length === 0) {
-    //                             //TO DO: Not Found 
-    //                         }
-    //                         resolve(result);
-    //                     }
-    //                 })
-    //             }
-    //         });
-    //     });
-    // }
+    public deleteStoreNameById(id: number): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            SqlHelper.executeQueryNoResult<localStore>(Queries.DeleteStoreName, id)
+                .then(() => {
+                    resolve();
+                })
+                .catch((error: systemError) => {
+                    reject(error);
+                });
+        });
+    }
+
 
     private parseLocalStoreName(local: localStore): store {
         return {

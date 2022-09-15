@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-import { ErrorCodes } from '../constants';
+import { ErrorCodes, NON_EXISTENT_ID } from '../constants';
 import { systemError, store } from '../entities';
 import { SchoolService } from '../services/school.service';
 import { ErrorHelper } from '../helpers/error.helper';
 import { RequestHelper } from '../helpers/request.helper';
 import { ResponseHelper } from '../helpers/response.helper';
+import { resolveProjectReferencePath } from 'typescript';
 
 
 const schoolService: SchoolService = new SchoolService();
@@ -39,14 +40,12 @@ const getStoreName = async (req: Request, res: Response, next: NextFunction) => 
     const sId: string = req.params.id;
 
     if (isNaN(Number(req.params.id))) {
-        // ToDO: Error handling
     }
 
     if (sId !== null && sId !== undefined) {
         id = parseInt(sId);
     }
     else {
-        // TODO: Error handling
     }
 
     if (id > 0) {
@@ -74,51 +73,78 @@ const getStoreName = async (req: Request, res: Response, next: NextFunction) => 
             });
     }
     else {
-        // TODO: Error handling
     }
 };
 
 
-    const updateStoreName = async (req: Request, res: Response, next: NextFunction) => {
+const updateStoreName = async (req: Request, res: Response, next: NextFunction) => {
+    const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(req.params.id);
+    if (typeof numericParamOrError === "number") {
+        if (numericParamOrError > 0) {
+            const body: store = req.body;
+            schoolService.updateStoreName({
+                id: numericParamOrError,
+                store_name: body.store_name
+            })
+                .then((result: store) => {
+                    return res.status(200).json(result);
+                })
+                .catch((error: systemError) => {
+                    return ResponseHelper.handleError(res, error);
+                });
+        }
+        else {
+        }
+    }
+    else {
+        return ResponseHelper.handleError(res, numericParamOrError);
+    }
+};
+
+
+    const deleteStoreNameById = async (req: Request, res: Response, next: NextFunction) => {
 
         const numericParamOrError: number | systemError = RequestHelper.ParseNumericInput(req.params.id);
         if (typeof numericParamOrError === "number") {
             if (numericParamOrError > 0) {
-                schoolService.getStoreName(numericParamOrError)
-                    .then((result: store) => {
-                        return res.status(200).json({
-                            result
-                        });
+                schoolService.deleteStoreNameById(numericParamOrError)
+                    .then(() => {
+                        return res.sendStatus(200);
                     })
                     .catch((error: systemError) => {
                         return ResponseHelper.handleError(res, error);
                     });
             }
             else {
-                // TODO: Error handling
             }
         }
         else {
             return ResponseHelper.handleError(res, numericParamOrError);
         }
     };
-   
-    // const updatePost = async (req: Request, res: Response, next: NextFunction) => {
-    //     // get the post id from the req.params
-    //     let id: number = req.params.id;
-    //     // get the data from req.body
-    //     let store_name: string = req.body.title ?? null;
-    //     // let body: string = req.body.body ?? null;
-    //     // update the post
-    //     // let response: AxiosResponse = await axios.put(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-    //     //     ...(title && { title }),
-    //     //     ...(body && { body })
-    //     // });
-    //     // // return response
-    //     // return res.status(200).json({
-    //     //     message: response.data
-    //     // });
-    // };
+
+    
+    const addStoreName = async (req: Request, res: Response, next: NextFunction) => {
+        const body: store = req.body;
+    
+        schoolService.addStoreName(
+            {
+            id: NON_EXISTENT_ID,
+            store_name: body.store_name
+        }
+        )
+            .then((result: store) => {
+                console.log('Я тут1!');
+                return res.status(200).json(result);
+            })
+            .catch((error: systemError) => {
+                console.log('Я тут2!');
+                return ResponseHelper.handleError(res, error);
+            });
+        console.log('Я тут3!');
+    }
+    
 
 
-export default { getStoreNames, getStoreName, updateStoreName };
+
+export default { getStoreNames, getStoreName, updateStoreName, deleteStoreNameById, addStoreName };
