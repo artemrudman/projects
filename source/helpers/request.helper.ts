@@ -5,6 +5,7 @@ import { systemError } from "../entities";
 
 
 export class RequestHelper {
+    
     public static ParseNumericInput(input: string): number | systemError {
         let result: number;
 
@@ -16,8 +17,9 @@ export class RequestHelper {
             result = parseInt(input);
         }
         else {
-            return ErrorHelper.parseError(ErrorCodes.InputParameterNotSupplied, General.InputParameterNotSupplied);
-        }
+            const noInputParameterError: systemError = ErrorHelper.parseError(ErrorCodes.InputParameterNotSupplied, General.InputParameterNotSupplied);
+            return noInputParameterError; 
+            }
         return (result);
     }
 }

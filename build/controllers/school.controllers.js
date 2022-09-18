@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("../constants");
-const school_service_1 = require("../services/school.service");
 const request_helper_1 = require("../helpers/request.helper");
 const response_helper_1 = require("../helpers/response.helper");
+const school_service_1 = require("../services/school.service");
 const schoolService = new school_service_1.SchoolService();
 const getStoreNames = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     schoolService.getStoreNames()
@@ -42,13 +42,11 @@ const getStoreName = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     let id = -1;
     const sId = req.params.id;
     if (isNaN(Number(req.params.id))) {
-        // ToDO: Error handling
     }
     if (sId !== null && sId !== undefined) {
         id = parseInt(sId);
     }
     else {
-        // TODO: Error handling
     }
     if (id > 0) {
         schoolService.getStoreName(id)
@@ -75,45 +73,64 @@ const getStoreName = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         });
     }
     else {
-        // TODO: Error handling
     }
 });
 const updateStoreName = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const numericParamOrError = request_helper_1.RequestHelper.ParseNumericInput(req.params.id);
     if (typeof numericParamOrError === "number") {
         if (numericParamOrError > 0) {
-            schoolService.getStoreName(numericParamOrError)
+            const body = req.body;
+            schoolService.updateStoreName({
+                id: numericParamOrError,
+                store_name: body.store_name
+            })
                 .then((result) => {
-                return res.status(200).json({
-                    result
-                });
+                return res.status(200).json(result);
             })
                 .catch((error) => {
                 return response_helper_1.ResponseHelper.handleError(res, error);
             });
         }
         else {
-            // TODO: Error handling
         }
     }
     else {
         return response_helper_1.ResponseHelper.handleError(res, numericParamOrError);
     }
 });
-// const updatePost = async (req: Request, res: Response, next: NextFunction) => {
-//     // get the post id from the req.params
-//     let id: number = req.params.id;
-//     // get the data from req.body
-//     let store_name: string = req.body.title ?? null;
-//     // let body: string = req.body.body ?? null;
-//     // update the post
-//     // let response: AxiosResponse = await axios.put(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-//     //     ...(title && { title }),
-//     //     ...(body && { body })
-//     // });
-//     // // return response
-//     // return res.status(200).json({
-//     //     message: response.data
-//     // });
-// };
-exports.default = { getStoreNames, getStoreName, updateStoreName };
+const deleteStoreNameById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const numericParamOrError = request_helper_1.RequestHelper.ParseNumericInput(req.params.id);
+    if (typeof numericParamOrError === "number") {
+        if (numericParamOrError > 0) {
+            schoolService.deleteStoreNameById(numericParamOrError)
+                .then(() => {
+                return res.sendStatus(200);
+            })
+                .catch((error) => {
+                return response_helper_1.ResponseHelper.handleError(res, error);
+            });
+        }
+        else {
+        }
+    }
+    else {
+        return response_helper_1.ResponseHelper.handleError(res, numericParamOrError);
+    }
+});
+const addStoreName = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const body = req.body;
+    schoolService.addStoreName({
+        id: constants_1.NON_EXISTENT_ID,
+        store_name: body.store_name
+    })
+        .then((result) => {
+        console.log('Я тут1!');
+        return res.status(200).json(result);
+    })
+        .catch((error) => {
+        console.log('Я тут2!');
+        return response_helper_1.ResponseHelper.handleError(res, error);
+    });
+    console.log('Я тут3!');
+});
+exports.default = { getStoreNames, getStoreName, updateStoreName, deleteStoreNameById, addStoreName };

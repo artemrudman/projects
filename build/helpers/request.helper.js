@@ -14,7 +14,8 @@ class RequestHelper {
             result = parseInt(input);
         }
         else {
-            return error_helper_1.ErrorHelper.parseError(constants_1.ErrorCodes.InputParameterNotSupplied, constants_2.General.InputParameterNotSupplied);
+            const noInputParameterError = error_helper_1.ErrorHelper.parseError(constants_1.ErrorCodes.InputParameterNotSupplied, constants_2.General.InputParameterNotSupplied);
+            return noInputParameterError;
         }
         return (result);
     }

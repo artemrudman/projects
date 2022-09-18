@@ -110,6 +110,8 @@ export class SqlHelper {
 
     public static executeQueryNoResult<T>(query: string, ...params: (string | number)[]): Promise<void> {
         return new Promise<void>((resolve, reject) => {
+            console.log(query);
+            
             SqlHelper.SqlConnection()
                 .then((connection: Connection) => {
                     const q: Query = connection.query(query, params, (queryError: Error | undefined, rows: any) => {
